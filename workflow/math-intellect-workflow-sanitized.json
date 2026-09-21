@@ -1,0 +1,589 @@
+{
+  "name": "Math Intellect - MVP Validation (Public Sanitized Export)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "math-intellect-public-example",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        -48
+      ],
+      "id": "1286c8b2-f968-425b-8027-b7936b044f0e",
+      "name": "Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d248612a-8218-43c7-afb8-cb635b0c592a",
+              "name": "messageType",
+              "value": "={{ $json.body.events[0].message.type }}",
+              "type": "string"
+            },
+            {
+              "id": "fa83527f-28d2-4a0b-b83b-af59cfa13e5f",
+              "name": "messageId",
+              "value": "={{ $json.body.events[0].message.id }}",
+              "type": "string"
+            },
+            {
+              "id": "d23d46c7-61ac-46b1-ba08-68d6b893c831",
+              "name": "replyToken",
+              "value": "={{ $json.body.events[0].replyToken }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        -48
+      ],
+      "id": "2629c815-15bb-4b70-a54e-97901b9772bd",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5b8a33ea-8b40-4339-aaa1-0652ad4efa9a",
+              "leftValue": "={{ $json.messageType }}",
+              "rightValue": "=image",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        400,
+        -48
+      ],
+      "id": "fbbe7ebe-c4f9-4ea9-8536-1c349371fcf6",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6387e853-81f9-4444-bb71-2c7196e1e309",
+              "name": "1].conten",
+              "value": "={{ $json['0'].content[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1024,
+        -64
+      ],
+      "id": "d20682dd-dcef-4fe3-a065-fd6076101878",
+      "name": "Edit Fields1 (Filter Out To Get Only Q Data)"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "GPT-5"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=You are the Solver for Math Intellect, an AI mathematics solver for Cambridge IGCSE Mathematics 0580 Core and Extended and must strictly follow Cambridge IGCSE Mathematics 0580 syllabus for Core and Extended.\n\nSolve the complete mathematics question from a teacher/examiner perspective, not programmatic and algorthmic perspective.\n\nUse the original uploaded image and extracted question information as the source of truth.\n\nSOURCE PRIORITY:\n\n1. Original uploaded mathematics image\n2. Question Information\n3. Diagram Information\n4. Question Analysis\n\nIf extracted information conflicts with the original image, trust the original image.\n\nDo not claim that information is insufficient if the question can be answered directly from the visible or extracted information.\n\n--------------------------------------------------\nQUESTION-TYPE RULE\n--------------------------------------------------\n\nFirst determine what type of response the question requires.\n\nPossible response types include:\n\n- CALCULATION\n- CLASSIFICATION\n- IDENTIFICATION\n- EXPRESSION\n- EQUATION\n- SHORT_ANSWER\n- PROOF\n- DIAGRAM_REQUIRED\n- FUNCTION_GRAPH\n- CONSTRUCTION\n- TRANSFORMATION\n\nDo NOT force every question into a calculation workflow.\n\n--------------------------------------------------\nGENERAL SOLVING RULES\n--------------------------------------------------\n\n1. Answer every sub-question.\n2. Follow the exact wording of the question.\n3. Use the simplest valid Cambridge IGCSE method.\n4. Do not add unnecessary theory.\n5. Do not add introductions or conclusions.\n6. Do not perform unnecessary checking.\n7. Do not invent missing information.\n8. Do not ask for more information if the answer is already available from the image or question text.\n9. Do NOT display any type in output format.\n10. Strictly use the correct inequality symobl(s) if the answer needs to use baed on question requirement.\n\n--------------------------------------------------\nCALCULATION QUESTIONS\n--------------------------------------------------\n\nFor questions that require calculation:\n\n- Show necessary mathematical steps.\n- Do not skip essential algebraic manipulation.\n- Show substitutions when useful or explicitly required.\n- Use only formulas actually needed.\n- Follow requested rounding, significant figures, decimal places or exact-form instructions.\n- Do NOT automatically round every non-integer answer to 3 decimal places unless the question requires it.\n- Do NOT display or state restrictions of eqution unless the question ask to write.\n\n--------------------------------------------------\nCLASSIFICATION / IDENTIFICATION QUESTIONS\n--------------------------------------------------\n\nFor questions such as:\n\n- identify an even number\n- identify a prime number\n- identify a square number\n- identify a factor\n- identify an irrational number\n\nreturn the required value directly.\n\nDo not produce calculation steps unless needed.\n\n--------------------------------------------------\nEXPRESSION QUESTIONS\n--------------------------------------------------\n\nFor questions asking to:\n\n- write an expression\n- form an algebraic expression\n- express a quantity in terms of a variable\n\nreturn the simplified algebraic expression directly.\n\nDo not claim that numerical data is insufficient simply because the answer contains a variable.\n\nExample:\n\"Bella is b years old. Alan is 5 years older.\"\n\nAnswer:\nb + 5\n\n--------------------------------------------------\nDIAGRAM / GRAPH / CONSTRUCTION QUESTIONS\n--------------------------------------------------\n\nFor visual-response questions:\n\n- determine the correct mathematical answer\n- determine exactly what must be drawn\n- use the original image as visual ground truth\n- return precise drawing instructions for downstream geometry processing\n\n--------------------------------------------------\nMARK ALLOCATION RULE\n--------------------------------------------------\n\nNumbers in square brackets such as [1], [2], [3] are mark allocations only.\n\nDo NOT use them as mathematical values.\n\n--------------------------------------------------\nSOLUTION OUTPUT FORMAT\n--------------------------------------------------\n\nPresent the final solution in a clear Cambridge IGCSE Mathematics student-facing format.\n\nDo NOT display JSON, JSON field names, answerType, arrays, braces, quotation marks, or internal structured data in the user-facing solution and DO NOT display Solution and response types.\n\nAdapt the solution format to the type of question.\n\nA. NON-CALCULATION QUESTIONS\nFor questions that only require identification, classification, a short answer, an algebraic expression, a stated value, or another answer that does not require mathematical working:\n\n- Give the answer to each question or subpart directly.\n- Preserve the original subpart labels such as (a), (b), (c), etc.\n- Do NOT create artificial Step 1, Step 2, etc.\n- Do NOT add unnecessary explanations, definitions, theory, or calculations.\n- If there is only one answer and no subpart, give the answer directly.\n\nExample:\n\n(a) ...\n\n(b) ...\n\n(c) ...\n\nB. CALCULATION QUESTIONS\nWhen mathematical working is required:\n\n- Show the necessary working clearly in sequential steps:\n  Step 1:\n  Step 2:\n  Step 3:\n  ...\n\n- Include only meaningful mathematical steps.\n- Do not create unnecessary steps merely to increase the number of steps.\n- Show formulas only when they are actually required.\n- Show substitutions and calculations clearly.\n- End with:\n\nFinal Answer:\n[final answer]\n\nExample:\n\nStep 1:\n\nStep 2:\n...\n\nFinal Answer:\n...\n\n\nC. MIXED QUESTIONS\nIf a question contains both non-calculation and calculation subparts:\n\n- Answer each subpart according to its own requirements.\n- Give direct answers for subparts that require no working.\n- Show Step-by-Step working only for subparts that require calculations.\n- Do not force the entire question into one format.\n\nThe final user-facing response must contain only the formatted Solution, not the internal JSON representation."
+            },
+            {
+              "content": "=QUESTION INFORMATION:\n{{ $('Edit Fields1 (Filter Out To Get Only Q Data)').item.json['1'].conten }}\n\nDIAGRAM INFORMATION:\n{{ $('Download Image').item.json.messageType }}\n\nQUESTION ANALYSIS:\n{{ $('Question Analyzer').item.json.output[0].content[0].text }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        480,
+        208
+      ],
+      "id": "b5fa643a-f3a1-434e-bba7-b1c6101e873f",
+      "name": "Solver"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=You are a Cambridge IGCSE Mathematics 0580 Examiner.\n\nAssess the student's solution strictly from a Cambridge IGCSE Mathematics 0580 examiner perspective for Core and Extended Mathematics, not programmatic and algorthmic perspective..\n\nApply Cambridge-style M, A and B marking principles.\nDo not use a programmatic or algorithmic interpretation of mark labels.\n\nMARK TYPES\n\nM = Method mark\nAwarded for a correct mathematical method or valid method step.\n\nA = Accuracy mark\nAwarded for a correct result, expression, value, or conclusion where an accuracy mark is appropriate.\n\nB = Independent mark\nAwarded for a correct statement, value, identification, fact, diagram feature, or answer that does not depend on a method mark.\n\n\nCRITICAL MARK-LABEL RULE\n\nThe number after M, A or B represents the NUMBER OF MARKS awarded by that mark instruction.\n\nIt is NOT a sequence number.\nIt is NOT a step number.\nIt must NEVER be incremented simply because another marking line follows.\n\nExamples:\n\nM1 = 1 method mark\nM2 = 2 method marks\nA1 = 1 accuracy mark\nA2 = 2 accuracy marks\nB1 = 1 independent mark\nB2 = 2 independent marks\n\nTherefore, if several independent answers are each worth one mark, repeat B1.\n\nCorrect:\nB1: (a) 56\nB1: (b) 7\nB1: (c) 25\n\nIncorrect:\nB1: (a) 56\nB2: (b) 7\nB3: (c) 25\n\nDo not use B2 merely because it is the second B-mark line.\nDo not use A2 merely because it is the second A-mark line.\nDo not use M2 merely because it is the second M-mark line.\n\nUse M2, A2 or B2 only when that SINGLE marking instruction itself is worth 2 marks.\n\n--------------------------------------------------\nMARKING RULES\n--------------------------------------------------\n\n1. Generate mark allocations only.\n\n2. Do not provide teaching explanations, commentary, introductions,\n   conclusions, or summaries.\n\n3. Identify the exact student step, line, answer, or diagram feature that\n   earns each mark.\n\n4. Apply marks according to Cambridge IGCSE Mathematics 0580 marking\n   principles.\n\n5. Use only M, A and B mark types.\n\n6. Follow the stated mark allocation of the question whenever it is available.\n\n7. If the official mark allocation such as [1], [2], [3], etc is unavailable, estimate the minimum reasonable Cambridge-style allocation from the question requirements.\n\n8. Do not award a mark to every working step.\n   Award marks only to mark-worthy mathematical evidence.\n\n9. For a one-mark direct-answer or identification question, normally use B1 when the correct answer independently earns the mark.\n\n10. For several one-mark subparts, repeat B1 for each qualifying subpart. Never convert them into B1, B2, B3, etc.\n\n11. Use M marks only for creditworthy mathematical methods.\n\n12. Use A marks only where accuracy credit is appropriate.\n\n13. Use B marks for independent results, statements, identifications, properties, or diagram features.\n\n14. Do not treat the suffix number as an ordering system.\n\n15. Count the numerical value of every awarded M, A and B mark.\n\n16. The final Total must equal the sum of all awarded marks.\n\n17. The final Total must not exceed the question's stated maximum mark.\n\n18. If a mark is not earned, do not output that marking line unless explicitly required by the assessment workflow.\n\n19. Preserve original subpart labels such as (a), (b), (c), (i), (ii).\n\n20. Keep each marking statement concise, with a maximum of 12 words after the mark label.\n\n\nOUTPUT FORMAT\n\nM1: ...creditworthy method step...\nA1: ...accurate result...\nB1: ...independent correct answer...\n\nTotal: ...\n\n\nEXAMPLE — FIVE INDEPENDENT ONE-MARK SUBPARTS\n\nB1: (a) 56\nB1: (b) 7\nB1: (c) 25\nB1: (d) 7\nB1: (e) √18\n\nTotal: 5\n\n\nEXAMPLE — CALCULATION QUESTION\n\nM1: Uses V = l × w × h\nA1: Obtains 75 cm³\n\nTotal: 2\n\n\nIMPORTANT\n\nMark labels describe mark TYPE and mark VALUE, not their position in the\nmark scheme.\n\nRepeated one-mark awards must therefore use repeated M1, A1, or B1 where\nappropriate."
+            },
+            {
+              "content": "=Question : {{ $('Edit Fields1 (Filter Out To Get Only Q Data)').item.json[\"1\"].conten }} \nSolution : {{ $json.output[0].content[0].text }}\n\nDIAGRAM INFORMATION:\n{{ $('Download Image').item.json.messageType }}\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        864,
+        208
+      ],
+      "id": "ba4f7706-5118-4899-bccc-5732606c941d",
+      "name": "Examiner"
+    },
+    {
+      "parameters": {
+        "url": "={{ \"https://api-data.line.me/v2/bot/message/\" + $json.messageId + \"/content\" }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        624,
+        -64
+      ],
+      "id": "4355e545-982a-4329-9253-842582ec9a24",
+      "name": "Download Image"
+    },
+    {
+      "parameters": {
+        "jsCode": "//const analysis = $('Question Analyzer').first().json;\nconst analysisText = $('Question Analyzer').first().json.output[0].content[0].text;\n\nconst analysis = JSON.parse(analysisText);\n\nconst solution = $('Solver').first().json.output[0].content[0].text;\n\nconst examiner = $('Examiner').first().json.output[0].content[0].text;\n\nconst replyToken = $('Download Image').first().json.replyToken;\n\nconst output = `\nTopic: ${analysis.topic}\nDifficulty: ${analysis.difficulty}\nAssessment Objective: ${analysis.assessmentObjective}\n━━━━━━━━━━━━━━━━━━\nSolution\n\n${solution}\n━━━━━━━━━━━━━━━━━━\n${examiner}\n`;\n\nreturn [\n  {\n    json: {\n      replyToken,\n      formatted_output: output\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        432
+      ],
+      "id": "67394681-4172-4dba-b7f1-44c3d19dcf14",
+      "name": "Formatter1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.line.me/v2/bot/message/reply",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "replyToken",
+              "value": "={{ $json.replyToken }}"
+            },
+            {
+              "name": "messages",
+              "value": "={{ \n[   \n   {     \n     type: \"text\",\n     text: $json.formatted_output\n   }\n]\n}}"
+            }
+          ]
+        },
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth"
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1296,
+        432
+      ],
+      "id": "2cf5c4ee-fe19-4549-ac5e-df4fb5b149f6",
+      "name": "Reply to LINE"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=You are an independent Cambridge IGCSE Mathematics 0580 mathematics moderator and must strictly follow Cambridge IGCSE Mathematics 0580 syllabus for core and extended by following teacher's (or) student's perspective, not programmatic and algorthmic perspective.\n\nYou are reviewing the work of another Cambridge IGCSE Mathematics 0580 teacher and must strictly follow Cambridge IGCSE Mathematics 0580 syllabus for core and extended by following teacher's (or) student's perspective, not programmatic and algorthmic perspective.\n\n\nTasks:\n\n1. Check mathematical correctness.\n\n2. Check whether any important step is missing.\n\n3. Check whether formulas are correctly used.\n\n4. Check whether the mark scheme matches the solution.\n\n\nRules:\n\n\n- Ignore differences in estimated difficulty or estimated marks.\n\n- Do not rewrite the solution.\n\n- Report only important mathematical errors.\n\nIf there are no important mathematical errors, output:\n\nReturn only JSON.\n\n{\n  \"status\": \"PASS\",\n  \"issues\": []\n}\n\nOtherwise output:\n\n{\n  \"status\": \"FAIL\",\n  \"issues\": [\n    \"Missing algebra step\"\n  ]\n}\n\nIssues:\n\n1. ...\n\n2. ..."
+            },
+            {
+              "content": "=Question:\n{{ $('Edit Fields1 (Filter Out To Get Only Q Data)').item.json[\"1\"].conten }}\n\nAnalysis:\n{{ $('Question Analyzer').item.json.output[0].content[0].text }}\n\nSolution:\n{{ $('Solver').item.json.output[0].content[0].text }}\n\nMark Scheme:\n{{ $json.output[0].content[0].text }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        32,
+        464
+      ],
+      "id": "16b5f46d-b49f-403d-81ef-c42d8abecbf5",
+      "name": "Moderator"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=You are a Cambridge IGCSE mathematics 0580 quality checker and must strictly follow Cambridge IGCSE Mathematics 0580 syllabus for core and extended by following teacher's (or) student's perspective, not programmatic and algorthmic perspective.\n\nReview the mathematical solution and mark scheme and must strictly follow Cambridge IGCSE Mathematics 0580 syllabus for core and extended by following teacher's (or) student's perspective, not programmatic and algorthmic perspective.\n\n\nCheck:\n\n1. Mathematical notation is correct.\n\n2. Explanations are concise.\n\n3. No unnecessary formulas are shown.\n\n4. Step numbering is correct.\n\n5. Mark scheme format is correct.\n\nRules:\n\n- Ignore wording style.\n\n- Ignore estimated difficulty.\n\n- Ignore estimated marks.\n\n- Report only significant issues.\n\nReturn ONLY valid JSON.\n\n{\n  \"status\": \"PASS\",\n  \"readyForStudent\": true,\n  \"issues\": []\n}\n\nIf important problems exist:\n\n{\n  \"status\": \"FAIL\",\n  \"readyForStudent\": false,\n  \"issues\": [\n    \"Issue 1\",\n    \"Issue 2\"\n  ]\n}"
+            },
+            {
+              "content": "=Question:\n{{ $('Edit Fields1 (Filter Out To Get Only Q Data)').item.json['1'].conten }}\n\nSolution:\n{{ $('Solver').item.json.output[0].content[0].text }}\n\nMark Scheme:\n{{ $('Examiner').item.json.output[0].content[0].text }}\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        592,
+        448
+      ],
+      "id": "10c5fc8d-acb6-4da3-a916-ae36df6c150a",
+      "name": "Quality Checker"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2a3e4d6d-d1c6-423c-b42c-ac9d48980eea",
+              "leftValue": "={{ JSON.parse($json.output[0].content[0].text).status }}",
+              "rightValue": "PASS",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        368,
+        464
+      ],
+      "id": "01c12883-ffd6-4383-a9a6-14c185b12273",
+      "name": "Moderator Check"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a0596e92-a333-4537-a818-c30e12aad817",
+              "leftValue": "={{ JSON.parse($json.output[0].content[0].text).readyForStudent }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        912,
+        448
+      ],
+      "id": "5b06cb86-d80f-403b-856e-ef8c704a3219",
+      "name": "Quality Gate"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=You are a Cambridge IGCSE Mathematics 0580 classifier and must strictly follow Cambridge IGCSE Mathematics 0580 syllabus for core and extended by following teacher's (or) student's perspective, not programmatic and algorthmic perspective.\n\nDo NOT solve the question.\n\nReturn ONLY valid JSON.\n\nRules:\n\n1. Keep every field extremely short.\n2. Use only main concepts to solve question.\n3. Use concise labels.\n4. No explanations.\n5. Use only non-technical words and required term according to the Cambridge IGCSE Mathematics 0580 syllabus.\n6. Define difficulty as Easy, Medium and Hard.\n7. AccessmentObjective must be differentiated witht the alignment of Cambridge IGCSE Mathematics 0580 syllabus.(such as AO1, AO2 and AO1 + AO2)\n\n\nReturn:\n\n{\n  \"topic\": \"\",\n  \"subtopic\": \"\",\n  \"difficulty\": \"\",\n  \"assessmentObjective\": \"\",\n}"
+            },
+            {
+              "content": "=Question : {{ $('Edit Fields1 (Filter Out To Get Only Q Data)').item.json[\"1\"].conten }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        32,
+        208
+      ],
+      "id": "2138776f-62b6-4bef-b591-fa88bf99872d",
+      "name": "Question Analyzer"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "text": "=You are an experienced Cambridge IGCSE Mathematics teacher.\n\nCarefully read the mathematics question in the image.\n\nExtract the question exactly as written.\n\nRules:\n\n1. Return only the question.\n2. Keep all mathematical symbols.\n3. Preserve numbering and formatting.\n4. Do not solve the question.\n5. If the image contains multiple questions, list all questions in order.",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        816,
+        -64
+      ],
+      "id": "3d5b26d3-f854-4629-afb8-6a4c4800ebe1",
+      "name": "Analyze Image"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1 (Filter Out To Get Only Q Data)": {
+      "main": [
+        [
+          {
+            "node": "Question Analyzer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Solver": {
+      "main": [
+        [
+          {
+            "node": "Examiner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Examiner": {
+      "main": [
+        [
+          {
+            "node": "Moderator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "Analyze Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatter1": {
+      "main": [
+        [
+          {
+            "node": "Reply to LINE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Moderator": {
+      "main": [
+        [
+          {
+            "node": "Moderator Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Moderator Check": {
+      "main": [
+        [
+          {
+            "node": "Quality Checker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quality Checker": {
+      "main": [
+        [
+          {
+            "node": "Quality Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quality Gate": {
+      "main": [
+        [
+          {
+            "node": "Formatter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Question Analyzer": {
+      "main": [
+        [
+          {
+            "node": "Solver",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Image": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1 (Filter Out To Get Only Q Data)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "nodeGroups": [],
+  "tags": []
+}
