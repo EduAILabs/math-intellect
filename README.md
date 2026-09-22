@@ -169,11 +169,11 @@ Detailed test-case records, scoring criteria, failure-stage analysis and support
 
 ### Detailed Validation Evidence
 
-[View the Prototype Validation Evidence Report (PDF)](validation/Math_Intellect_Prototype_Validation_Evidence_Record_V3.0.pdf)
+[View the Prototype Validation Evidence Report (PDF)](validation/Math_Intellect_Prototype_Validation_Evidence_Record.pdf)
 
-[Download the Prototype Validation Record (XLSX)](validation/Math_Intellect_Prototype_Validation_Record_V3.0.xlsx)
+[Download the Prototype Validation Record (XLSX)](validation/Math_Intellect_Prototype_Validation_Record.xlsx)
 
-[Download the Prototype Validation Evidence Slides (PPTX)](validation/Math_Intellect_Prototype_Validation_Evidence_Record_V3.0.pptx)
+[Download the Prototype Validation Evidence Slides (PPTX)](validation/Math_Intellect_Prototype_Validation_Evidence_Record.pptx)
 
 ## Implementation Notes
 
