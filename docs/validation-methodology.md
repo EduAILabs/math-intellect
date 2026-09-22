@@ -56,13 +56,13 @@ The Moderator and Quality Checker may flag issues, but quality-gate outcomes are
 
 ## Reproducibility and Reviewer Use
 
-A reviewer should be able to locate the same test-case identifier across the workbook and evidence, inspect the original question reference and relevant screenshots, and trace the recorded result. The detailed record should document sample composition, metric calculation, scoring decisions, exclusions, and failure modes. Any revised test set should be versioned rather than silently replacing the frozen V3.0 baseline.
+A reviewer should be able to locate the same test-case identifier across the workbook and evidence, inspect the original question reference and relevant screenshots, and trace the recorded result. The detailed record should document sample composition, metric calculation, scoring decisions, exclusions, and failure modes. Any revised test set should be versioned rather than silently replacing the frozen baseline.
 
 ### Evidence files expected in the repository
 
-- [Prototype Validation Evidence Report (PDF)](../validation/Math_Intellect_Prototype_Validation_Evidence_Record_V3.0.pdf)
-- [Prototype Validation Record (XLSX)](../validation/Math_Intellect_Prototype_Validation_Record_V3.0.xlsx)
-- [Prototype Validation Evidence Slides (PPTX)](../validation/Math_Intellect_Prototype_Validation_Evidence_Record_V3.0.pptx)
+- [Prototype Validation Evidence Report (PDF)](../validation/Math_Intellect_Prototype_Validation_Evidence_Record.pdf)
+- [Prototype Validation Record (XLSX)](../validation/Math_Intellect_Prototype_Validation_Record.xlsx)
+- [Prototype Validation Evidence Slides (PPTX)](../validation/Math_Intellect_Prototype_Validation_Evidence_Record.pptx)
 
 **Publication check:** The links above are intended repository paths. They will work only when the corresponding files have been uploaded with these exact names. Before making the repository public, review screenshots and past-paper/mark-scheme extracts for personal information, secrets, and reproduction permissions. The PDF is the preferred quick-review format; the workbook provides the underlying scoring record.
 
