@@ -150,14 +150,14 @@ The current prototype was evaluated using 51 Cambridge IGCSE Mathematics test ca
 | Validation Metric | Result |
 |---|---:|
 | Total Test Cases | 51 |
-| Text Interpretation Accuracy | 100.00% |
-| Visual/Diagram Interpretation Accuracy | 4.17% |
-| Overall Question Interpretation Success | 54.90% |
-| Final Mathematical-Answer Accuracy | 95.65% |
+| Text Interpretation Accuracy | 100.00% (51/51) |
+| Visual/Diagram Interpretation Accuracy | 4.17% (1/24 applicable)|
+| Overall Question Interpretation Success | 54.90% (28/51) |
+| Final Mathematical-Answer Accuracy | 95.65% (44/46 assessable) |
 | Overall Sub-question Accuracy | 76.62% |
 | Average Solution Completeness | 77.78% |
 | Average Assessment Alignment | 92.66% |
-| Successful End-to-End LINE Response Rate | 90.20% |
+| Successful End-to-End LINE Response Rate | 90.20% (46/51) |
 
 ### Validation Dashboard
 ![Math Intellect Prototype Validation Dashboard](screenshots/validation-dashboard.png)
