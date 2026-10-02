@@ -175,6 +175,18 @@ Detailed test-case records, scoring criteria, failure-stage analysis and support
 
 [Download the Prototype Validation Evidence Slides (PPTX)](validation/Math_Intellect_Prototype_Validation_Evidence_Record.pptx)
 
+## Demo Video
+
+A short end-to-end demonstration of the Math Intellect functional MVP:
+
+- Mathematics question submitted through LINE Official Account
+- n8n workflow execution
+- Multi-stage AI processing
+- Structured response returned through LINE
+- 51-case technical validation summary
+
+**Watch the demo:** [Math Intellect – Functional MVP Demonstration](YOUR_VIDEO_LINK)
+
 ## Implementation Notes
 
 - The workflow is orchestrated sequentially through n8n
