@@ -175,7 +175,7 @@ Detailed test-case records, scoring criteria, failure-stage analysis and support
 
 [Download the Prototype Validation Evidence Slides (PPTX)](validation/Math_Intellect_Prototype_Validation_Evidence_Record.pptx)
 
-## Demo Video
+### Demo Video
 
 A short end-to-end demonstration of the Math Intellect functional MVP:
 
@@ -185,7 +185,7 @@ A short end-to-end demonstration of the Math Intellect functional MVP:
 - Structured response returned through LINE
 - 51-case technical validation summary
 
-**Watch the demo:** [Math Intellect – Functional MVP Demonstration](YOUR_VIDEO_LINK)
+**Watch the demo:** [Math Intellect – Functional MVP Demonstration](https://www.youtube.com/watch?v=VFN_wd_LeRU)
 
 ## Implementation Notes
 
