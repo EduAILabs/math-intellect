@@ -144,6 +144,16 @@ End-to-end testing confirms that mathematics questions can be submitted through 
 
 ![LINE Output](screenshots/line-output.png)
 
+#### Math Intellect – LINE Official Account
+
+**LINE ID:** `@096jiiqu`
+
+Scan the QR code to open the Math Intellect LINE Official Account.
+
+![Math Intellect LINE Official Account QR](assets/line-official-account-qr.png)
+
+[Open the Math Intellect LINE Official Account](https://line.me/R/ti/p/@096jiiqu)
+
 ### Prototype Validation
 The current prototype was evaluated using 51 Cambridge IGCSE Mathematics test cases covering text-based questions and questions containing visual or diagram information. The validation framework evaluates question interpretation, mathematical accuracy, solution completeness, assessment alignment, and end-to-end LINE delivery.
 
