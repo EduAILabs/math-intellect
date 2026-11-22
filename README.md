@@ -5,163 +5,186 @@
 # Math Intellect
 ## AI-Assisted Mathematics Learning Platform
 
-**Project Lead:** Ngwe Htoon (Howard)
-**Role:** AI EdTech Product Developer | Mathematics Educator | Software R&D Professional
+**Project Lead:** Ngwe Htoon (Howard)  
+**Role:** AI EdTech Product Developer | Mathematics Educator | Software R&D Professional  
+**Current status:** Cloud-deployed functional MVP with live reviewer testing through LINE
 
-Math Intellect is a functional MVP that combines AI-assisted image interpretation, mathematical reasoning, curriculum-aware processing, quality assurance, workflow automation, and LINE-based delivery to provide structured mathematics learning support beyond classroom hours.
+Math Intellect is an AI-assisted mathematics learning platform that combines image-based question intake, mathematical reasoning, curriculum-aware processing, multi-stage quality review, workflow automation, and LINE-based delivery.
+
+The current validated MVP is deployed on **n8n Cloud** and connected to the **Math Intellect LINE Official Account**. Users can submit mathematics-question images through LINE and receive structured text responses after the workflow completes its analysis, solving, assessment-review, moderation, quality-checking, and formatting stages.
+
+> **Current deployment boundary:** This is a live functional MVP, not a production SaaS or institution-ready deployment. Persistent learner records, teacher dashboards, production monitoring, institutional administration, and broader SaaS infrastructure remain future work.
 
 ## Project Overview
-Math Intellect is an AI-assisted learning platform designed to support mathematics education in international schools. The project combines mathematics pedagogy, workflow automation, and large language models (LLMs) to transform handwritten examination questions into structured, examination-oriented solutions.
 
-Built on n8n, the LINE Messaging API, and the OpenAI API, the platform allows students and teachers to submit mathematics problems through a familiar messaging interface and receive step-by-step solutions, assessment insights, and assessment-oriented guidance in real time.
+Math Intellect was developed at the intersection of software engineering, international mathematics education, and AI-enabled workflow development.
 
-The current prototype focuses on Cambridge IGCSE Mathematics and is informed by classroom teaching practice, curriculum requirements, and examination-oriented assessment principles.
+The platform currently supports:
 
-Math Intellect is a self-initiated EdTech project developed from the intersection of embedded-software engineering experience, international mathematics education, and AI-enabled workflow development.
+- LINE-based image submission
+- n8n Cloud webhook orchestration
+- OpenAI-assisted image and language processing
+- Question analysis
+- Step-by-step mathematical solution generation
+- Examiner-inspired assessment guidance
+- Moderator and quality-gate review
+- JavaScript-based response formatting
+- LINE reply delivery
+- Safe user-facing responses for unsupported input and failed review gates
 
-## The Problem	
-Students often encounter difficult mathematics questions outside scheduled lesson hours, when immediate teacher support is unavailable. Teachers also face significant workloads in assessment preparation, feedback, and individual learner support.
+The current workflow focuses on Cambridge IGCSE Mathematics-style questions. Generated assessment guidance is **not** an official Cambridge mark scheme or certified grade.
 
-General-purpose AI tools can generate mathematical responses quickly, but their outputs may vary in structure, completeness, image interpretation, curriculum alignment, and assessment relevance.
+## Current System Architecture
 
-Math Intellect was created to:
-	
-	- provide structured, step-by-step mathematical reasoning
-	- provide assessment-oriented guidance informed by curriculum and marking principles
-	- bridge the gap between general AI responses and classroom practice
-	- extend mathematics learning support beyond scheduled lesson hours
+```mermaid
+flowchart LR
+    A[LINE Official Account] --> B[LINE Messaging API]
+    B --> C[n8n Cloud Webhook]
+    C --> D[Edit Fields]
+    D --> E{Image input?}
 
-## Core Features
-AI-Powered Question Recognition
+    E -- Yes --> F[Download Image]
+    F --> G[Analyze Image]
+    G --> H[Question Analyzer]
+    H --> I[Solver]
+    I --> J[Examiner]
+    J --> K[Moderator]
+    K --> L{Moderator Check}
 
-	- Receives handwritten or printed mathematics questions through LINE
-	- Extracts mathematical content directly from uploaded images
-	- Supports examination-style question formats
+    L -- Pass --> M[Quality Checker]
+    L -- Fail --> R[Review Failure Reply]
 
-Multi-Layer Reasoning Engine (AI processing workflow)
+    M --> N{Quality Gate}
+    N -- Pass --> O[Formatter]
+    N -- Fail --> R
 
-The platform does not rely on a single AI response. Instead, it employs a structured verification pipeline and each layer performs an independent role to improve consistency, explainability, and output quality.
+    O --> P[Reply to LINE]
+    R --> P
 
-1. **Question Analyzer**
-	
-	Interprets the submitted image, reconstructs the question, identifies the topic and extracts relevant information.
+    E -- No --> U[Unsupported Input Reply]
+    U --> V[Reply to LINE1]
+```
 
-2. **Solver**
-	
-	Generates a complete step-by-step mathematical solution.
-
-3. **Examiner**
-	
-	Reviews the solution from an assessment perspective and produces examiner-inspired guidance.
-
-4. **Moderator**
-	
-	Checks consistency among question interpretation, solution and assessment output.
-
-5. **Quality Checker**
-	
-	Performs an additional review of correctness, completeness, clarity and structure.
-
-6. **Formatter**
-	
-	Converts verified information into a concise student-facing response for LINE.
-
-### Examination-Oriented Output
-
-	- Step-by-step mathematical solutions
-	- Examiner-inspired assessment guidance
-	- Assessment-objective classification
-	- Structured feedback for students and teachers
-
-## System Architecture
-![Math Intellect System Architecture](screenshots/architecture.png)
-
-The current MVP runs as a locally hosted development prototype using n8n. ngrok is used to expose the local webhook during development. Cloud deployment and persistent infrastructure are planned for later deployment.
+The **public GitHub workflow export is sanitized and inactive**. The live n8n Cloud workspace remains private because it contains operational configuration and connected credentials.
 
 ## Technology Stack
 
-| Layer | Technology | Role |
+| Layer | Technology | Current role |
 |---|---|---|
-| Workflow Automation | n8n | End-to-end workflow orchestration |
-| AI Processing | OpenAI API | Vision and language processing |
-| Communication | LINE Official Account / Messaging API | Student input and response delivery |
+| User Interface | LINE Official Account | Image submission and response delivery |
+| Messaging | LINE Messaging API | Inbound webhook events and outbound replies |
+| Workflow Automation | n8n Cloud | Live end-to-end orchestration |
+| AI Processing | OpenAI API | Image interpretation and language processing |
 | Processing Logic | JavaScript | Structured data handling and response formatting |
-| Development Access | ngrok | Local webhook exposure during prototype development |
-| Planned Infrastructure | Docker / PostgreSQL | Future deployment and persistent data services |
+| Public Technical Evidence | GitHub | Sanitized workflow, documentation, validation evidence |
+| Future Persistent Services | Database / additional cloud services | Planned; not part of the current MVP |
 
+## Current MVP Behavior
 
-## Educational Perspective
-Math Intellect is shaped not only by software engineering, but also by years of experience in international mathematics education.
+### Supported input
 
-The system architecture reflects a classroom workflow:
+The reviewer-facing MVP expects a clear image of a mathematics question.
 
-	Understanding the question.
-	Solving the problem.
-	Evaluating the reasoning.
-	Reviewing accuracy.
-	Presenting clear feedback.
+If the incoming LINE message is not a supported image input, the workflow routes:
 
-This educational approach distinguishes the project from conventional chatbot-based solutions.
+```text
+Edit Fields → If (false)
+→ Unsupported Input Reply
+→ Reply to LINE1
+```
 
-## Current MVP Status
-### Implemented
+The user receives a request to submit a clear mathematics-question image.
 
-	- LINE image submission
-	- Webhook and image retrieval
-	- Vision-based question analysis
-	- Multi-stage mathematical reasoning
-	- Examiner / Moderator / Quality Checker stages
-	- Structured LINE response
-	- JavaScript-based structured response formatting
+### Main processing path
 
-### Planned
+```text
+Webhook
+→ Edit Fields
+→ If
+→ Download Image
+→ Analyze Image
+→ Question Analyzer
+→ Solver
+→ Examiner
+→ Moderator
+→ Moderator Check
+→ Quality Checker
+→ Quality Gate
+→ Formatter
+→ Reply to LINE
+```
 
-	- PDF report delivery
-	- Persistent learner records
-	- Teacher dashboard
-	- Question and worksheet generation
-	- Performance analytics
-	- Expanded syllabus support
-	- Multilingual support
-	- Cloud deployment
+### Review-failure path
 
-## MVP Evidence
+If either the Moderator Check or Quality Gate fails, the workflow routes to:
 
-The current MVP has been implemented and tested through the complete workflow from LINE-based question submission to AI-assisted processing, quality review, formatting, and final response delivery.
+```text
+Moderator Check (false) ─┐
+                         ├→ Review Failure Reply → Reply to LINE
+Quality Gate (false) ────┘
+```
 
-### n8n Workflow
-The functional n8n workflow demonstrates the implemented multi-stage AI processing pipeline, including Question Analyzer, Solver, Examiner, Moderator, Quality Checker, and Formatter stages.
+This prevents the normal formatted answer from being sent when the workflow cannot verify the result through its current review gates.
 
-![n8n Workflow](screenshots/n8n-workflow.png)
+## Diagram and Visual-Question Scope
 
-### Structured Output Formatter
-The Formatter stage converts verified workflow outputs into a structured, student-facing mathematics response for delivery through LINE.
+The current cloud-deployed MVP can process mathematics questions that contain diagrams or graphical information and can generate the corresponding mathematical solution when the information is interpreted successfully.
 
-![Formatter Node](screenshots/formatter-node.png)
+A separate limitation applies when the **final answer itself must be rendered as a diagram, graph, construction, transformation, or other visual output**. The current stable reviewer-facing MVP does not yet generate that final rendered image. Instead, it can provide text-based drawing or construction instructions. Rendered visual-answer generation is under active development.
 
-### LINE User Interaction
-End-to-end testing confirms that mathematics questions can be submitted through LINE and processed through the implemented workflow to produce structured student-facing responses.
+This distinction is important:
 
-![LINE Output](screenshots/line-output.png)
+- **Diagram/graph in the input question:** supported within the current MVP, subject to interpretation quality.
+- **Rendered diagram/graph required as the final output:** currently returned as text-based drawing instructions; image rendering remains under development.
 
-#### Math Intellect – LINE Official Account
+## Live Reviewer Testing
+
+### Math Intellect LINE Official Account
 
 **LINE ID:** `@096jiiqu`
 
-Scan the QR code to open the Math Intellect LINE Official Account.
+[Open the Math Intellect LINE Official Account](https://line.me/R/ti/p/@096jiiqu)
 
 ![Math Intellect LINE Official Account QR](assets/line-official-account-qr.png)
 
-[Open the Math Intellect LINE Official Account](https://line.me/R/ti/p/@096jiiqu)
+The LINE Official Account is the public user-facing testing interface. The private n8n Cloud editor is not provided as public access.
 
-### Prototype Validation
-The current prototype was evaluated using 51 Cambridge IGCSE Mathematics test cases covering text-based questions and questions containing visual or diagram information. The validation framework evaluates question interpretation, mathematical accuracy, solution completeness, assessment alignment, and end-to-end LINE delivery.
+### Short Demonstration Video
 
-| Validation Metric | Result |
+**Math Intellect – Cloud-Deployed Functional MVP | Short Demonstration**
+
+[Watch the short demonstration](https://youtu.be/98R2du9Jkoc)
+
+The demonstration shows a mathematics question submitted through LINE, processed through the deployed n8n Cloud workflow, and returned as a structured response.
+
+## Public Technical Evidence
+
+### Sanitized n8n Workflow
+
+[View the sanitized workflow export](workflow/math-intellect-workflow-sanitized.json)
+
+The public JSON preserves the workflow structure and routing logic while removing credentials, live tokens, account-specific identifiers, and private deployment metadata.
+
+See [workflow/README.md](workflow/README.md) for setup and security notes.
+
+### Technical Documentation
+
+- [Current Deployment Status](docs/deployment-status.md)
+- [System Architecture](docs/system-architecture.md)
+- [AI Workflow](docs/ai-workflow.md)
+- [Quality Assurance](docs/quality-assurance.md)
+- [Validation Methodology](docs/validation-methodology.md)
+- [Development Roadmap](docs/roadmap.md)
+
+## Prototype Validation Baseline
+
+The documented prototype-validation baseline contains **51 Cambridge IGCSE Mathematics test cases**.
+
+| Validation Metric | Reported Result |
 |---|---:|
 | Total Test Cases | 51 |
 | Text Interpretation Accuracy | 100.00% (51/51) |
-| Visual/Diagram Interpretation Accuracy | 4.17% (1/24 applicable)|
+| Visual/Diagram Interpretation Accuracy | 4.17% (1/24 applicable) |
 | Overall Question Interpretation Success | 54.90% (28/51) |
 | Final Mathematical-Answer Accuracy | 95.65% (44/46 assessable) |
 | Overall Sub-question Accuracy | 76.62% |
@@ -169,121 +192,78 @@ The current prototype was evaluated using 51 Cambridge IGCSE Mathematics test ca
 | Average Assessment Alignment | 92.66% |
 | Successful End-to-End LINE Response Rate | 90.20% (46/51) |
 
-### Validation Dashboard
-![Math Intellect Prototype Validation Dashboard](screenshots/validation-dashboard.png)
-
-The validation results demonstrate strong performance in text interpretation, final mathematical-answer accuracy, assessment alignment, and end-to-end LINE delivery. They also identify visual and diagram interpretation as a significant current limitation of the prototype and therefore a priority for future technical improvement.
-
-Detailed test-case records, scoring criteria, failure-stage analysis and supporting evidence are maintained in the project validation record.
-
+**Important scope note:** These figures are a frozen historical validation baseline and must not be treated as a benchmark of every later workflow change. The current cloud deployment and newer failure-routing behavior postdate parts of that validation evidence. Selected diagram-containing questions have been repeatedly tested on the current workflow, but no new aggregate benchmark is claimed here.
 
 ### Detailed Validation Evidence
 
-[View the Prototype Validation Evidence Report (PDF)](validation/Math_Intellect_Prototype_Validation_Evidence_Record.pdf)
-
-[Download the Prototype Validation Record (XLSX)](validation/Math_Intellect_Prototype_Validation_Record.xlsx)
-
-[Download the Prototype Validation Evidence Slides (PPTX)](validation/Math_Intellect_Prototype_Validation_Evidence_Record.pptx)
-
-### Demo Video
-
-A short end-to-end demonstration of the Math Intellect functional MVP:
-
-- Mathematics question submitted through LINE Official Account
-- n8n workflow execution
-- Multi-stage AI processing
-- Structured response returned through LINE
-- 51-case technical validation summary
-
-**Watch the demo:** [Math Intellect – Functional MVP Demonstration](https://www.youtube.com/watch?v=VFN_wd_LeRU)
-
-## Implementation Notes
-
-- The workflow is orchestrated sequentially through n8n
-- Each processing stage receives structured information from the previous stage
-- Processing responsibilities are separated rather than assigned to one prompt
-- JavaScript is used to control structured data transformation and final formatting
-- LINE currently serves as the prototype user interface
-- ngrok is used only for development webhook access and is not treated as production hosting
-
-## Curriculum Alignment and Quality Assurance
-The current Math Intellect MVP is developed with reference to Cambridge IGCSE Mathematics 0580 and Cambridge IGCSE Additional Mathematics 0606.
-
-The workflow considers curriculum topic, expected solution depth, relevant assessment objectives, and calculator/non-calculator context when processing mathematics questions.
-
-The quality-assurance framework evaluates five dimensions:
-
-	- **Input Integrity** - whether the submitted question is readable and correctly interpreted
-	- **Curriculum Fit** – whether terminology, method and learning objective are appropriate
-	- **Mathematical Validity** – whether calculations, reasoning and final answers are correct
-	- **Assessment Consistency** – whether assessment guidance is broadly consistent with relevant assessment objectives and marking principles
-	- **Output Quality** – whether the final response is clear, complete and student-friendly
-
+- [Prototype Validation Evidence Report (PDF)](validation/Math_Intellect_Prototype_Validation_Evidence_Record.pdf)
+- [Prototype Validation Record (XLSX)](validation/Math_Intellect_Prototype_Validation_Record.xlsx)
+- [Prototype Validation Evidence Slides (PPTX)](validation/Math_Intellect_Prototype_Validation_Evidence_Record.pptx)
 
 ## Current Limitations
-The current version is an MVP and has several known limitations:
 
-- Image interpretation quality depends on the clarity of the submitted image
-- AI-generated mathematical responses require continued validation across a broader range of question types and visual formats
-- The current system does not yet include persistent learner records
-- Cloud deployment is not yet implemented
-- Teacher dashboards and institutional administration tools are planned
-- Broader curriculum coverage and assessment behaviour require further controlled validation
+The current MVP remains an early-stage technical product.
 
-## Future Roadmap
-### 2026 - Functional MVP
-**Phase 1: Intelligent Mathematics Assistant**
-	
-	- Image-based mathematics solving and automated feedback
-	- Functional MVP
-	- Structured technical validation
-	- GitHub technical documentation
+Known limitations include:
 
-### 2027 - Teacher Dashboard & Cloud SaaS Platform
-**Phase 2: Teacher Productivity Platform**
-	
-	- Worksheet generation and assessment-support tools
-	- Teacher dashboard
-	- Cloud deployment
-	- SaaS architecture
+- Output quality depends on input-image clarity and correct interpretation.
+- AI-generated mathematical responses can still contain errors.
+- The frozen validation baseline identified significant historical weakness in visual/diagram interpretation.
+- No new aggregate benchmark has yet replaced the frozen 51-case baseline.
+- Final rendered visual answers are not yet generated; drawing instructions are returned as text where applicable.
+- Persistent learner records are not implemented.
+- Teacher dashboards and institutional administration are not implemented.
+- Production-grade monitoring, access control, privacy operations, and service-level guarantees are not established.
+- Educational impact, commercial traction, and institution-level outcomes have not been demonstrated.
 
-### 2028 - School Partnerships & Institutional Licensing
-**Phase 3: School-Level Deployment**
-	
-	- Learning analytics and institutional tools
-	- School and learning-centre pilots
-	- Institutional licensing model
+## Development Roadmap
 
-### 2029+ - Regional Expansion & AI Learning Analysis
-**Phase 4: Regional Expansion**
-	
-	- Expanded international-curriculum support
-	- Regional expansion
-	- AI-assisted learning analytics
+### 2026 — Functional MVP
+
+**Implemented / current**
+
+- LINE image submission
+- n8n Cloud deployment
+- OpenAI-assisted image and language processing
+- Multi-stage reasoning and review workflow
+- Safe unsupported-input reply
+- Safe review-failure reply
+- Structured LINE response
+- Public GitHub documentation and sanitized workflow
+- 51-case frozen technical-validation baseline
+- Live reviewer testing
+
+**Active development**
+
+- Diagram/graph interpretation improvements
+- Rendered visual-answer generation
+- Wider regression testing
+- Additional operational monitoring and reliability work
+
+### 2027 — Teacher Productivity & SaaS Expansion
+
+Planned work may include teacher dashboards, worksheet/question generation, persistent data services, analytics, PDF delivery, stronger monitoring, access controls, and a more complete SaaS architecture.
+
+### 2028 — School / Learning-Centre Pilots
+
+Planned, subject to reliability, privacy, educator review, and operational readiness.
+
+### 2029+ — Regional Expansion
+
+Potential additional curricula, multilingual support, learning analytics, and regional deployment.
 
 ## Long-Term Vision
-Math Intellect aims to evolve into an AI-assisted STEM learning platform that extends access to structured mathematics support while preserving the central role of teachers.
 
-The long-term objective is to support more adaptive and accessible learning through familiar digital devices, while using intelligent automation, explainable reasoning, and scalable education technology to complement teaching practice.
-
-## Future Product and Commercial Potential
-The platform combines expertise from three domains:
-
-	- Mathematics education
-	- Artificial intelligence
-	- Workflow automation
-
-Its architecture is designed to support future applications in:
-
-	- International schools
-	- Private learning centres
-	- Teacher productivity tools
-	- AI-assisted assessment systems
-
-Math Intellect represents an early-stage EdTech initiative with the potential to scale into a broader educational ecosystem serving students and educators across Asia.
+Math Intellect aims to evolve into an AI-assisted STEM learning platform that complements teachers by extending access to structured mathematics support while preserving educator oversight.
 
 ## Project Report
 
-The project report provides a consolidated overview of Math Intellect, including its educational objectives, system architecture, AI workflow, curriculum alignment, MVP implementation, validation, and future development.
+The public project report documents the earlier MVP architecture, validation, educational rationale, and development direction.
 
 [View the Math Intellect Project Report (PDF)](reports/Math_Intellect_Project_Report_Public.pdf)
+
+> Some historical report sections describe the earlier local-development stage. The current repository Markdown documentation is the source of truth for the latest cloud-deployment status.
+
+---
+
+Math Intellect is an independent project and is not affiliated with or endorsed by Cambridge University Press & Assessment.

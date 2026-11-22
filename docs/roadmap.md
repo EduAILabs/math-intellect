@@ -1,65 +1,101 @@
 # Development Roadmap
 
-## Math Intellect – AI-Assisted Mathematics Learning Platform
+## Math Intellect — AI-Assisted Mathematics Learning Platform
 
 **Project Lead:** Ngwe Htoon (Howard)  
-**Document status:** Planned development roadmap from the current functional MVP to future SaaS, institutional, and regional stages; milestones are targets, not guaranteed delivery dates or completed commitments.
+**Document status:** Current roadmap after initial n8n Cloud deployment.
 
-## Roadmap Scope
+## Current Baseline — November 2026
 
-This document expands the milestones in the frozen README V4.0 and the project portfolio. **The years below are targets, not completed releases, guaranteed delivery dates, confirmed partnerships, or financial projections.** The current baseline is a locally hosted, functioning LINE-based MVP with documented technical validation.
+The stable Math Intellect MVP is now deployed on n8n Cloud and available for live testing through the Math Intellect LINE Official Account.
 
-## Phase 1 — 2026: Functional MVP
+This is an important MVP milestone, but it is **not** the same as a complete production SaaS platform.
 
-**Product focus:** Intelligent Mathematics Assistant.  
-**Status:** Functional prototype implemented; technical refinement and documentation remain ongoing.
+## Phase 1 — 2026: Functional Cloud MVP
 
-Current evidence includes LINE image submission, n8n webhook and retrieval, OpenAI-assisted image/language processing, six workflow stages, JavaScript formatting, LINE text response, and a 51-case technical validation record. GitHub documentation and reviewer-accessible evidence are being assembled.
+**Status:** Implemented and continuing refinement.
 
-Priorities for the remaining MVP stage include improving visual and diagram interpretation, reviewing failures, broadening controlled test coverage, removing sensitive content from public evidence, and establishing a reproducible technical baseline. The present MVP should not be described as a production SaaS product.
+Implemented:
 
-## Phase 2 — 2027: Teacher Dashboard & Cloud SaaS Platform
+- LINE image submission
+- n8n Cloud webhook and workflow
+- OpenAI-assisted image/language processing
+- Question Analyzer
+- Solver
+- Examiner
+- Moderator
+- Moderator Check
+- Quality Checker
+- Quality Gate
+- JavaScript Formatter
+- Structured LINE response
+- Unsupported-input reply path
+- Review-failure reply path
+- Public GitHub technical documentation
+- Sanitized workflow export
+- Frozen 51-case technical-validation baseline
+- Live reviewer testing
 
-**Product focus:** Teacher Productivity Platform.  
+Active refinement:
+
+- diagram and graphical interpretation;
+- rendered visual-answer generation;
+- wider regression testing;
+- operational monitoring;
+- failure handling beyond currently covered routing paths.
+
+## Phase 2 — 2027: Teacher Productivity and SaaS Expansion
+
 **Status:** Planned.
 
-Proposed work includes a teacher dashboard, worksheet and question generation, assessment-support tools, formatted PDF delivery, more stable cloud hosting, and SaaS-oriented architecture. Docker and PostgreSQL are being considered for later deployment and persistent data services; they are not part of the documented current hosting stack.
+Potential work:
 
-Development and pilot criteria should cover technical reliability, educator review, privacy, access control, operating costs, and evidence that proposed teacher tools are useful in practice.
+- teacher dashboard;
+- worksheet and question generation;
+- persistent learner/service data;
+- PDF/report delivery;
+- analytics;
+- stronger authentication and access control;
+- production-grade monitoring;
+- scalable SaaS architecture.
 
-## Phase 3 — 2028: School Partnerships & Institutional Licensing
+Cloud hosting itself is no longer a future-only milestone; the current MVP is already deployed on n8n Cloud. The 2027 objective is broader **production SaaS architecture and operational maturity**, not initial cloud deployment.
 
-**Product focus:** School-Level Deployment.  
-**Status:** Planned; no partnerships or licensing deals are claimed.
+## Phase 3 — 2028: School / Learning-Centre Pilots
 
-Proposed work includes learning-centre or school pilots, institution-level accounts and administration, learner records and topic-level analytics where appropriate, operational support, and an institutional licensing model. Any pilot involving learners requires permissions, privacy safeguards, and educator oversight. Institutional rollout depends on evidence from previous stages.
+**Status:** Planned.
 
-## Phase 4 — 2029+: Regional Expansion & AI Learning Analysis
+Potential work:
 
-**Product focus:** Regional Expansion.  
-**Status:** Long-term direction.
+- supervised pilots;
+- institution-level administration;
+- educator feedback;
+- learner records where appropriate;
+- operational support;
+- privacy and safeguarding procedures;
+- institutional licensing model.
 
-Potential work includes additional international curricula, multilingual support, expanded regional access, and AI-assisted learning analytics. The roadmap does not claim validated demand in any particular country, curriculum-wide coverage, or proven educational gains.
+No signed partnership or commercial deployment is claimed.
 
-## Proposed Stage-Gate Evidence
+## Phase 4 — 2029+: Regional Expansion
 
-| Transition | Evidence to establish before advancing |
+Potential work:
+
+- additional curricula;
+- multilingual support;
+- regional partnerships;
+- AI-assisted learning analytics;
+- broader localization.
+
+## Stage-Gate Evidence
+
+| Transition | Evidence needed |
 |---|---|
-| Functional MVP → teacher pilot/productivity work | Better visual interpretation; documented technical tests and limitations; usable explanations; consent and privacy approach. |
-| Teacher tools → institution pilots | Educator feedback, stable operation, support procedures, verified feature behavior, access/data safeguards. |
-| Institution pilots → licensing | Documented pilot outcomes, service terms, cost assumptions, genuine customer interest, and required safeguards. |
-| Institutional service → regional expansion | Evidence of repeatable operations, curriculum-specific validation, localization needs, and sustainable delivery. |
+| Live MVP → wider teacher use | Stronger regression results, monitoring, privacy process, educator review |
+| Teacher tools → institution pilots | Stable operations, access controls, support process, verified feature behavior |
+| Institution pilots → licensing | Documented pilot results, service readiness, genuine customer demand |
+| Institutional service → regional expansion | Repeatable operations, localization evidence, sustainable delivery |
 
-## Commercial Positioning
+## Important Evidence Rule
 
-A potential model combines **individual subscriptions** for learners, **professional subscriptions or tools** for teachers/tutors, and **institutional licensing or partnerships** for schools/learning centres. All are proposed future arrangements; prices, revenue, paid users, and signed contracts are not established by the current MVP.
-
-The project aims to complement teachers rather than replace them. Educational impact—including learning gains and teacher workload reduction—must be measured separately from technical performance before it is reported as an achieved outcome.
-
-## Related Documents
-
-- [Root README — canonical roadmap](../README.md)
-- [Commercialization plan](commercialization-plan.md)
-- [Market analysis](market-analysis.md)
-- [Educational impact](educational-impact.md)
-- [Validation methodology](validation-methodology.md)
+The frozen 51-case validation baseline remains historical evidence. New workflow changes should be evaluated separately rather than silently replacing the baseline.

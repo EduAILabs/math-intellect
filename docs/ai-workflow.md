@@ -1,73 +1,134 @@
 # AI Workflow
 
-## Math Intellect – AI-Assisted Mathematics Learning Platform
+## Math Intellect — Current Cloud MVP
 
 **Project Lead:** Ngwe Htoon (Howard)  
-**Document status:** Implemented MVP workflow description, including current processing stages, known limitations, and clearly identified future extensions.
+**Document status:** Current implemented workflow behavior.
 
 ## Purpose
 
-Math Intellect uses a sequential, task-specific workflow to turn an image submitted through LINE into a structured mathematics response. The processing stages separate question interpretation, mathematical reasoning, assessment review, consistency checking, quality review, and presentation. This design supports traceable review; it does not guarantee an error-free answer.
+Math Intellect uses a sequential n8n Cloud workflow to convert a mathematics-question image submitted through LINE into a structured text response.
 
-## End-to-End Processing Flow
+The workflow separates intake, image interpretation, question analysis, solving, assessment review, moderation, quality checking, formatting, and delivery.
+
+## End-to-End Flow
 
 ```text
-Student image submitted through LINE Official Account
-    ↓
-LINE Messaging API event → n8n webhook → image retrieval
-    ↓
-OpenAI vision-based image interpretation
-    ↓
-Question Analyzer → Solver → Examiner → Moderator → Quality Checker
-    ↓
-Formatter (JavaScript-based output assembly)
-    ↓
-LINE Messaging API → structured LINE response
+LINE image
+→ Webhook
+→ Edit Fields
+→ If
+→ Download Image
+→ Analyze Image
+→ Edit Fields1
+→ Question Analyzer
+→ Solver
+→ Examiner
+→ Moderator
+→ Moderator Check
+→ Quality Checker
+→ Quality Gate
+→ Formatter1
+→ Reply to LINE
 ```
 
-The vision-processing and Question Analyzer responsibilities are related but distinct: image processing supplies extracted information, while the Question Analyzer interprets the mathematical task and structures information for the downstream stages. n8n orchestrates the sequence and passes structured information between stages.
+## Processing Stages
 
-## Six Processing Stages
-
-| Stage | Defined responsibility | Intended output or check |
-|---|---|---|
-| 1. Question Analyzer | Reconstruct the question; identify topic, subtopic, given data, required results, and relevant contextual information. | Structured question interpretation for solution generation. |
-| 2. Solver | Select an appropriate approach and generate mathematical steps, calculations, and final answers. | Step-by-step solution. |
-| 3. Examiner | Review the method and answer from an assessment perspective. | Examiner-inspired assessment guidance, including relevant marking considerations. |
-| 4. Moderator | Compare the interpreted question, solution, and assessment information for inconsistencies. | Consistency review and quality-gate information. |
-| 5. Quality Checker | Review mathematical validity, solution completeness, clarity, and response structure. | Additional quality-review information. |
-| 6. Formatter | Consolidate reviewed outputs using JavaScript and organize a concise response. | Student-facing text for LINE. |
-
-The Examiner is the source for assessment-oriented guidance in the consolidated workflow; the Formatter presents the reviewed content rather than independently inventing assessment marks. Automated reviews may miss errors, so a quality-gate pass must not be interpreted as independent proof of correctness.
-
-## Student-Facing Response Structure
-
-| Part | Content |
+| Stage | Responsibility |
 |---|---|
-| Header | Question analysis and assessment context. |
-| Body | Step-by-step mathematical solution. |
-| Tail | Examiner-inspired assessment guidance. |
+| Analyze Image | Extract the visible mathematics question. |
+| Question Analyzer | Identify topic, subtopic, difficulty, and assessment objective. |
+| Solver | Generate the mathematical solution. |
+| Examiner | Produce examiner-inspired assessment guidance. |
+| Moderator | Check mathematical consistency. |
+| Quality Checker | Review notation, completeness, clarity, and assessment format. |
+| Formatter1 | Assemble the student-facing response. |
 
-The response structure is designed for LINE's mobile text interface. A more detailed PDF/email delivery route is **planned**, not an implemented MVP capability.
+## Input Routing
 
-## Current Implementation
+The first IF node distinguishes supported image input from unsupported input.
 
-The functional MVP includes LINE image intake, webhook and image retrieval, OpenAI vision/language processing, the six-stage pipeline, JavaScript formatting, and LINE text delivery. It is orchestrated by locally hosted n8n, with ngrok providing development webhook access. The workflow has been tested end to end, but reliability varies by question type.
+### Supported image
 
-## Known Failure Modes and Boundaries
+```text
+If (true) → Download Image → ...
+```
 
-- Poor-quality images or missing diagram information can cause incorrect question interpretation before mathematical solving begins.
-- A mathematically plausible solution may address an incorrectly reconstructed question; therefore, downstream correctness must not substitute for input verification.
-- Moderator and Quality Checker stages provide additional review, not guaranteed mathematical proof or official examination marking.
-- Retry requests for unusable images, production monitoring, and wider controlled validation require further development.
-- Student information, tokens, raw webhook payloads, and credentials must not be included in public workflow exports or screenshots.
+### Unsupported input
 
-## Evidence and Related Documents
+```text
+If (false)
+→ Unsupported Input Reply
+→ Reply to LINE1
+```
 
-- [Root README — MVP and validation summary](../README.md)
+This gives the user a direct request to send a clear image of a mathematics question.
+
+## Review Routing
+
+### Moderator Check
+
+```text
+Moderator Check (true)
+→ Quality Checker
+
+Moderator Check (false)
+→ Review Failure Reply
+→ Reply to LINE
+```
+
+### Quality Gate
+
+```text
+Quality Gate (true)
+→ Formatter1
+→ Reply to LINE
+
+Quality Gate (false)
+→ Review Failure Reply
+→ Reply to LINE
+```
+
+The review-failure route prevents the normal formatted answer from being sent when the current review gates reject the result.
+
+## Student-Facing Response
+
+Normal output contains:
+
+- Topic
+- Difficulty
+- Assessment Objective
+- Solution
+- Final answer
+- Examiner-inspired assessment guidance
+
+Generated assessment guidance is not an official examination mark scheme.
+
+## Diagram and Graphical Questions
+
+The current cloud MVP can process input questions containing diagrams or graphs when the information is successfully interpreted.
+
+If the required **final response itself must be rendered visually**, the current stable workflow returns text-based drawing instructions rather than a generated image. Rendered visual output remains under active development.
+
+## Current Deployment
+
+The stable reviewer-facing workflow is deployed on n8n Cloud.
+
+The live n8n workspace is private. The public repository contains a sanitized inactive JSON export for technical inspection.
+
+## Known Boundaries
+
+- Image clarity affects interpretation quality.
+- AI stages can still produce mathematical or interpretive errors.
+- Review gates are safeguards, not independent proof.
+- Runtime/API/network failures are not yet covered by production-grade retry and monitoring.
+- Persistent learner records, teacher dashboards, institutional controls, and production SaaS operations remain future work.
+- Frozen validation metrics must not be treated as automatically updated by later cloud deployment changes.
+
+## Related Documents
+
+- [Deployment status](deployment-status.md)
 - [System architecture](system-architecture.md)
-- [Curriculum alignment](curriculum-alignment.md)
-- [Quality assurance framework](quality-assurance.md)
+- [Quality assurance](quality-assurance.md)
 - [Validation methodology](validation-methodology.md)
-
-The repository may include a sanitized workflow export under `workflow/`; its availability and completeness must be checked separately from this design description.
+- [Workflow export notes](../workflow/README.md)

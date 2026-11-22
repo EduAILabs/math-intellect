@@ -1,281 +1,255 @@
 # Math Intellect — Product and System Specification
 
 **Owner:** Ngwe Htoon (Howard)  
-**Status:** Specification for the functional MVP  
-**Last updated:** 2026-10-06
+**Status:** Current specification for the cloud-deployed functional MVP  
+**Last updated:** 2026-11-22
 
 ## 1. Purpose
 
-Math Intellect is an AI-assisted mathematics learning platform that turns a
-student's image-based question into a structured, examination-oriented response
-delivered through LINE. The MVP is designed to extend access to mathematics
-support outside classroom hours while keeping teachers central to learning and
-assessment.
+Math Intellect is an AI-assisted mathematics learning platform that converts a mathematics-question image submitted through LINE into a structured, assessment-oriented text response.
 
-This document defines the current product boundary, expected behavior, quality
-requirements, known limitations, and planned direction. It distinguishes
-implemented MVP behavior from future work.
+The current stable MVP is deployed on n8n Cloud and connected to the Math Intellect LINE Official Account. This specification defines the implemented reviewer-facing behavior, failure routing, known limitations, and future boundaries.
 
 ## 2. Product Principles
 
-1. **Interpret before solving.** A plausible answer to a misread question is a
-   failure.
-2. **Show reasoning.** Responses should make the method understandable rather
-   than return only a final answer.
-3. **Separate responsibilities.** Interpretation, solving, assessment review,
-   consistency checking, quality review, and formatting are distinct stages.
-4. **Be curriculum-aware.** Terminology, depth, method, and assessment context
-   should fit the relevant syllabus.
-5. **Communicate uncertainty.** Automated checks reduce risk but do not prove
-   correctness or constitute official examination marking.
-6. **Protect learners and credentials.** Secrets, personal data, and private
-   student submissions must not enter the public repository.
+1. Interpret before solving.
+2. Show meaningful mathematical reasoning.
+3. Separate interpretation, solving, assessment, moderation, quality checking, formatting, and delivery.
+4. Remain curriculum-aware without claiming official examination authority.
+5. Fail safely when the current review gates do not approve an answer.
+6. Keep secrets, private user data, and operational credentials out of the public repository.
+7. Distinguish current live-MVP deployment from future production SaaS or institutional deployment.
 
-## 3. Users and Primary Use Cases
+## 3. Current Users and Use Case
 
 ### Current users
 
-- Students seeking guided help with an IGCSE Mathematics question.
-- Teachers or tutors inspecting a structured solution and examiner-inspired
-  assessment guidance.
+- Students seeking structured help with mathematics questions.
+- Teachers or tutors reviewing generated working and examiner-inspired guidance.
+- Technical/reviewer users evaluating the current MVP.
 
-### Primary MVP use case
+### Primary use case
 
-1. A user sends a mathematics-question image to the
-   Math Intellect LINE Official Account.
-2. LINE sends an event to the n8n webhook.
-3. The workflow retrieves and interprets the image.
-4. Specialized stages analyze, solve, review, and format the response.
-5. LINE delivers a structured text response to the user.
-
-### Future use cases
-
-Teacher dashboards, worksheet generation, PDF delivery, learner records,
-analytics, institutional administration, multilingual support, and wider
-curriculum coverage are planned and are not current MVP capabilities.
+1. User submits a mathematics-question image to the Math Intellect LINE Official Account.
+2. LINE sends the event to the n8n Cloud webhook.
+3. The workflow checks that the incoming message is a supported image input.
+4. The image is retrieved and interpreted.
+5. Question Analyzer, Solver, Examiner, Moderator, and Quality Checker process the question.
+6. Review gates determine whether a normal answer can be returned.
+7. Formatter assembles the reviewed response.
+8. LINE returns either the structured answer or a safe fallback message.
 
 ## 4. Current System Boundary
 
 ### Implemented
 
-- LINE image-message intake and reply-token handling.
-- n8n webhook orchestration and LINE image retrieval.
+- LINE image-message intake.
+- n8n Cloud webhook orchestration.
+- LINE image retrieval.
 - OpenAI-assisted image interpretation and language processing.
-- Question Analyzer, Solver, Examiner, Moderator, and Quality Checker stages.
-- Moderator and quality-gate routing.
-- JavaScript-based Formatter and LINE text delivery.
-- A sanitized, inactive 15-node workflow export for technical inspection.
-- A documented 51-case prototype-validation baseline.
+- Question Analyzer.
+- Solver.
+- Examiner.
+- Moderator.
+- Moderator Check.
+- Quality Checker.
+- Quality Gate.
+- JavaScript Formatter.
+- Normal LINE response.
+- Unsupported-input user response.
+- Review-failure user response.
+- Public sanitized workflow export.
+- Public technical documentation.
+- Frozen 51-case validation baseline.
+- Live reviewer testing through LINE.
 
-### Development infrastructure
+### Current deployment
 
-- n8n is locally hosted for the current prototype.
-- ngrok exposes the webhook during development.
-- OpenAI API and LINE Messaging API are external services.
+- The reviewer-facing stable MVP is deployed on **n8n Cloud**.
+- The n8n workspace/editor is private.
+- LINE is the public user-facing interface.
+- GitHub provides sanitized technical evidence.
+- Local development continues separately for experimental features, including rendered visual-answer generation.
 
-### Not implemented or not demonstrated
+### Not implemented as a current production capability
 
-- Production cloud deployment or production monitoring.
-- Persistent learner accounts, records, or databases.
-- Teacher dashboard or institutional administration.
-- Production-ready retry and failure messaging for all rejected paths.
-- Email/PDF delivery.
-- Formal security, privacy, accessibility, or regulatory certification.
-- Complete syllabus coverage or production-grade diagram interpretation.
-- Proven learning outcomes, commercial traction, or institutional adoption.
+- Institution-ready SaaS operations.
+- Persistent learner accounts or databases.
+- Teacher dashboard.
+- Production-grade monitoring and service guarantees.
+- Institutional administration.
+- Formal security/privacy/compliance certification.
+- Proven educational outcomes or commercial traction.
+- Automatic final rendered images for answers that require a diagram, graph, construction, transformation, or similar visual.
 
 ## 5. Functional Architecture
 
 ```text
-LINE image
+LINE message
   → Webhook
-  → Event normalization and image check
-  → Image download
+  → Edit Fields
+  → If (image check)
+
+If TRUE:
+  → Download Image
   → Analyze Image
+  → Edit Fields1
   → Question Analyzer
   → Solver
   → Examiner
   → Moderator
   → Moderator Check
+
+Moderator Check TRUE:
   → Quality Checker
   → Quality Gate
-  → Formatter
+
+Quality Gate TRUE:
+  → Formatter1
   → Reply to LINE
+
+Moderator Check FALSE:
+  → Review Failure Reply
+  → Reply to LINE
+
+Quality Gate FALSE:
+  → Review Failure Reply
+  → Reply to LINE
+
+If FALSE:
+  → Unsupported Input Reply
+  → Reply to LINE1
 ```
 
-The six application stages are Question Analyzer, Solver, Examiner, Moderator,
-Quality Checker, and Formatter. Intake, routing, and delivery nodes support those
-stages. In the exported n8n workflow, the JavaScript node named `Formatter1`
-implements the Formatter stage.
+## 6. Stage Responsibilities
 
-## 6. Stage Responsibilities and Contracts
-
-| Stage | Responsibility | Required result |
-|---|---|---|
-| Analyze Image | Extract visible question content from the submitted image. | Faithful text/data extraction with no invented diagram facts. |
-| Question Analyzer | Reconstruct the task and identify topic, givens, requested results, and context. | Structured interpretation suitable for downstream solving. |
-| Solver | Select a suitable method and generate working and final answers. | Logically ordered, mathematically valid solution. |
-| Examiner | Review the demonstrated method from an assessment perspective. | Examiner-inspired guidance consistent with the solution. |
-| Moderator | Compare interpretation, solution, and assessment output. | Explicit consistency status and identified issues. |
-| Quality Checker | Review correctness, completeness, clarity, and structure. | Explicit quality status and actionable issues. |
-| Formatter | Assemble reviewed fields for the mobile interface. | Concise student-facing Header–Body–Tail response. |
-
-The Examiner is the source of assessment-oriented guidance. The Formatter must
-present reviewed content and must not independently invent marks.
-
-## 7. Student-Facing Output Contract
-
-The normal LINE response uses three logical sections:
-
-| Section | Content |
+| Stage | Responsibility |
 |---|---|
-| Header | Question interpretation and relevant assessment context. |
-| Body | Step-by-step working and final answer. |
-| Tail | Examiner-inspired assessment guidance. |
+| Analyze Image | Extract the visible mathematics question from the submitted image. |
+| Question Analyzer | Classify and structure the interpreted question. |
+| Solver | Generate the mathematical solution. |
+| Examiner | Produce examiner-inspired assessment guidance. |
+| Moderator | Check consistency between interpretation, solution, and assessment output. |
+| Moderator Check | Route PASS results forward or route FAIL results to the safe failure reply. |
+| Quality Checker | Review correctness, completeness, notation, clarity, and response structure. |
+| Quality Gate | Route ready-for-student output forward or route failed output to the safe failure reply. |
+| Formatter1 | Assemble topic, difficulty, assessment objective, solution, and assessment guidance. |
+| Reply to LINE | Deliver the normal response or review-failure response. |
+| Unsupported Input Reply | Create a message requesting a clear mathematics-question image. |
+| Reply to LINE1 | Deliver the unsupported-input message. |
 
-The response should be readable on a mobile device, preserve essential
-mathematical working, clearly identify the final answer, and avoid claiming that
-generated guidance is an official Cambridge mark scheme or certified grade.
+## 7. Failure Behavior
 
-## 8. Quality Requirements
+### Unsupported input
 
-Each material change must be evaluated against five dimensions:
+If the first IF node determines that the message is not a supported image input:
 
-1. **Input Integrity** — readable source and faithful reconstruction, including
-   subparts, labels, and diagram facts.
-2. **Curriculum Fit** — appropriate topic, terminology, method, depth, and
-   calculator context.
-3. **Mathematical Validity** — correct formulas, calculations, reasoning, units,
-   and final answers.
-4. **Assessment Consistency** — guidance fits the actual method and relevant
-   assessment principles.
-5. **Output Quality** — complete, clear, logically ordered, and suitable for LINE.
+```text
+If (false) → Unsupported Input Reply → Reply to LINE1
+```
 
-Automated moderation and quality gates are safeguards, not mathematical proof.
-Objective comparison with the source question and an appropriate reference
-remains necessary during validation.
+### Failed review
 
-## 9. Failure Behavior
+If either review gate rejects the generated work:
 
-The system should fail safely when an image is unreadable, required diagram
-information is missing, structured output cannot be parsed, or a review stage
-rejects the response.
+```text
+Moderator Check (false) → Review Failure Reply → Reply to LINE
+Quality Gate (false)    → Review Failure Reply → Reply to LINE
+```
 
-Target behavior is to avoid presenting an unverified solution and to return a
-clear retry or escalation message. The current sanitized workflow does not yet
-provide user-facing responses on all false branches; this is a known MVP gap.
+The current fallback message informs the user that the solution could not be safely verified and asks for a clearer question or teacher review.
 
-Failures must be classified by their earliest identifiable stage:
+These safeguards do not cover every possible runtime, API, network, or malformed-response failure. Production-grade retry, monitoring, and observability remain future work.
 
-- intake or delivery;
-- image interpretation;
-- question analysis;
-- mathematical reasoning;
-- assessment alignment;
-- moderation or quality review;
-- formatting.
+## 8. Diagram and Visual-Output Boundary
 
-## 10. Security, Privacy, and Publication Requirements
+The current cloud MVP can process questions that contain diagrams or graphical information when the input can be interpreted successfully.
 
-- Never commit API keys, LINE tokens, channel secrets, live webhook identifiers,
-  credential IDs, `.env` files, raw webhook payloads, reply tokens, user IDs, or
-  private n8n exports.
-- Use n8n credentials or environment-backed secrets, never hard-coded headers.
-- Treat any exposed token as compromised; revoke and rotate it and remediate Git
-  history where applicable.
-- Do not publish identifiable student data or student submissions without an
-  appropriate permission and privacy basis.
-- Sanitize screenshots, exports, logs, documents, and sample payloads before
-  publication.
-- Use self-authored, licensed, or appropriately referenced question material.
-  Do not reproduce protected papers or mark schemes beyond permitted use.
-- State clearly that Math Intellect is independent and is not affiliated with or
-  endorsed by Cambridge University Press & Assessment.
+The current limitation is narrower than “no diagram support”:
 
-See [SECURITY.md](SECURITY.md) and [workflow/README.md](workflow/README.md).
+- Diagram/graph **input** can be processed.
+- Mathematical solutions for such questions can be generated.
+- If the **final answer itself must be drawn or rendered visually**, the stable MVP currently returns text-based drawing instructions rather than a generated final image.
+- Rendered visual-answer generation remains under active development.
 
-## 11. Validation Baseline
+The frozen 51-case baseline contains older visual/diagram metrics and remains unchanged as historical validation evidence.
 
-The repository reports a frozen 51-case Cambridge IGCSE Mathematics technical
-prototype-validation baseline. The workbook and supporting evidence are the
-sources of record for exact denominators, applicability rules, calculations, and
-case-level evidence.
+## 9. Student-Facing Output
 
-Headline metrics must never be used outside their scope. In particular, final
-answer accuracy among assessable outputs must not be presented as the probability
-that any submitted image will be solved correctly. The reported 4.17% visual/
-diagram interpretation result is a significant current limitation.
+Normal output contains:
 
-Any new validation cycle must:
+- Topic
+- Difficulty
+- Assessment Objective
+- Step-by-step solution
+- Final answer
+- Examiner-inspired assessment guidance
 
-- preserve the existing baseline instead of silently replacing it;
-- assign versioned test-case identifiers;
-- separate interpretation, reasoning, assessment, and delivery outcomes;
-- document exclusions and non-applicable cases;
-- retain an evidence chain from source question to recorded score; and
-- report regressions and failures as well as successes.
+Generated assessment guidance must not be described as an official Cambridge mark scheme or certified grade.
 
-See [docs/validation-methodology.md](docs/validation-methodology.md).
+## 10. Quality Requirements
 
-## 12. Acceptance Criteria for MVP Changes
+Every material workflow change should be checked for:
 
-A change is ready for review when:
+1. Input integrity
+2. Curriculum fit
+3. Mathematical validity
+4. Assessment consistency
+5. Output quality
+6. Failure-route behavior
+7. LINE delivery
 
-- the exported workflow remains valid JSON and contains no credentials or
-  personal data;
-- the intended node connections and true/false branches have been inspected;
-- affected success and failure paths have been tested in a separate development
-  n8n instance using self-authored test material;
-- mathematical output has been checked against an independent solution;
-- LINE formatting and message-size behavior have been inspected;
-- documentation distinguishes implemented behavior from planned behavior;
-- relevant samples or validation records are updated without altering the frozen
-  baseline; and
-- a final secret and privacy scan finds no sensitive material.
+Automated review is a safeguard, not proof of correctness.
 
-Importing the public workflow successfully is useful evidence but does not by
-itself establish end-to-end correctness.
+## 11. Security and Privacy
 
-## 13. Prioritized Product Requirements
+Public artifacts must not contain:
 
-### P0 — protect users and preserve the baseline
+- OpenAI API keys
+- LINE access tokens or channel secrets
+- n8n credential IDs
+- private webhook identifiers where sensitive
+- instance IDs
+- raw reply tokens
+- LINE user identifiers
+- private student submissions
 
-- Keep all public assets sanitized.
-- Prevent rejected or incomplete outputs from being presented as verified.
-- Preserve accurate, scoped validation claims.
+The public workflow must remain sanitized and inactive.
 
-### P1 — strengthen the MVP
+## 12. Validation Boundary
 
-- Improve visual and diagram interpretation.
-- Add user-facing responses for unusable input and failed quality gates.
-- Add structured error handling, retries, and observability.
-- Expand controlled tests across question types.
+The 51-case validation record is a frozen baseline. Later cloud deployment and workflow-routing changes do not automatically update those metrics.
 
-### P2 — prepare for pilots
+New metrics require a new versioned evaluation rather than silent replacement of the historical baseline.
 
-- Establish stable cloud hosting, access controls, logging, privacy processes,
-  and cost monitoring.
-- Add teacher review and feedback mechanisms.
-- Evaluate usefulness separately from technical performance.
+## 13. Roadmap Priorities
 
-### P3 — future product expansion
+### Active
 
-- PDF delivery, teacher tools, persistent records, learning analytics,
-  institutional administration, additional curricula, multilingual delivery, and
-  broader STEM modules.
+- Improve diagram/graph interpretation.
+- Develop rendered visual-answer generation.
+- Extend regression testing.
+- Improve monitoring and operational reliability.
 
-## 14. Sources of Truth
+### Planned
 
-Use the narrowest authoritative source for each claim:
+- Persistent data services.
+- Teacher dashboard.
+- PDF delivery.
+- Analytics.
+- Additional curricula.
+- Multilingual support.
+- Institution-level administration and access controls.
 
-- Product status and public overview: [README.md](README.md)
-- Current system boundary: [docs/system-architecture.md](docs/system-architecture.md)
-- Stage behavior: [docs/ai-workflow.md](docs/ai-workflow.md)
-- Public workflow implementation: [workflow/math-intellect-workflow-sanitized.json](workflow/math-intellect-workflow-sanitized.json)
-- Sanitization and import notes: [workflow/README.md](workflow/README.md)
-- Quality criteria: [docs/quality-assurance.md](docs/quality-assurance.md)
-- Validation definitions and claims: [docs/validation-methodology.md](docs/validation-methodology.md)
-- Roadmap status: [docs/roadmap.md](docs/roadmap.md)
+## 14. Source of Truth
 
-When documents conflict, do not guess. Reconcile the discrepancy explicitly and
-update all affected documents in the same change.
+For current product status, use:
+
+1. `SPEC.md`
+2. `README.md`
+3. `docs/deployment-status.md`
+4. `workflow/README.md`
+5. `docs/system-architecture.md`
+6. `docs/ai-workflow.md`
+
+Historical reports and frozen validation records should not be silently rewritten to reflect later deployment changes.

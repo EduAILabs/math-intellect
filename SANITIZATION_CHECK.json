@@ -1,0 +1,16 @@
+{
+  "node_count": 18,
+  "active": false,
+  "unsupported_route": true,
+  "moderator_failure_route": true,
+  "quality_failure_route": true,
+  "review_failure_delivery": true,
+  "secret_scan": {
+    "OpenAI-style key": false,
+    "LINE hard-coded bearer": false,
+    "credential object": false,
+    "instanceId": false,
+    "workflow id": false,
+    "original versionId": false
+  }
+}

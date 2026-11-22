@@ -1,8 +1,8 @@
 # CLAUDE.md
 
-Claude-specific guidance for working on Math Intellect. Follow the repository-wide
-instructions in [AGENTS.md](AGENTS.md) and the product contract in
-[SPEC.md](SPEC.md); this file adds a concise operating workflow for Claude Code.
+Claude-specific guidance for working on Math Intellect.
+
+Follow `AGENTS.md` and `SPEC.md`.
 
 ## Start Here
 
@@ -12,109 +12,86 @@ Before editing, read:
 2. `README.md`
 3. `AGENTS.md`
 4. `SECURITY.md`
-5. `workflow/README.md`
-6. the task-relevant file under `docs/`
+5. `docs/deployment-status.md`
+6. `workflow/README.md`
+7. task-relevant files under `docs/`
 
-Then inspect `git status --short`, the current diff, and all references to the
-term, metric, node, or feature you plan to change.
+## Current Project State
 
-## Project Model
-
-Math Intellect is a LINE-based, n8n-orchestrated functional MVP. Its current
-application flow is:
+Math Intellect is a LINE-based, n8n-orchestrated **cloud-deployed functional MVP**.
 
 ```text
-LINE image → intake and image retrieval → Analyze Image → Question Analyzer
-→ Solver → Examiner → Moderator → Quality Checker → JavaScript Formatter
-→ LINE text response
+LINE image
+→ n8n Cloud webhook
+→ input check
+→ image retrieval
+→ Analyze Image
+→ Question Analyzer
+→ Solver
+→ Examiner
+→ Moderator
+→ Moderator Check
+→ Quality Checker
+→ Quality Gate
+→ Formatter
+→ LINE response
 ```
 
-The repository contains a sanitized public workflow and supporting documentation
-and evidence. It does not contain a production deployment or a conventional
-application build/test toolchain.
+Failure routes are also implemented:
 
-## How to Work
+```text
+Unsupported input
+→ Unsupported Input Reply
+→ Reply to LINE1
 
-- Plan only as much as needed; keep edits narrow and reviewable.
-- Do not infer product status from aspirational documents. Confirm it in the
-  current-system and workflow documentation.
-- Search before changing shared terminology or status claims.
-- Edit source Markdown or JSON rather than generated reports and screenshots.
-- Explain uncertainty instead of filling gaps with plausible details.
-- Keep educational, technical, and evidence claims distinct.
-- Never push, deploy, activate the workflow, or modify external services without
-  explicit authorization.
+Moderator Check false
+→ Review Failure Reply
+→ Reply to LINE
+
+Quality Gate false
+→ Review Failure Reply
+→ Reply to LINE
+```
+
+The public GitHub workflow is sanitized and inactive. The live n8n Cloud editor is private.
 
 ## Non-Negotiable Constraints
 
-- Never expose or commit secrets, private exports, raw LINE payloads, student
-  data, or identifiable submissions.
-- Never hard-code LINE or OpenAI authorization values in workflow JSON.
-- Keep the public n8n workflow inactive and sanitized.
+- Never expose secrets or private workflow credentials.
+- Never hard-code live LINE/OpenAI authorization values into public files.
+- Keep the public JSON inactive.
 - Never call examiner-inspired guidance an official mark scheme or grade.
-- Never claim Cambridge affiliation or endorsement.
+- Never claim Cambridge affiliation.
 - Never present a quality-gate pass as proof of correctness.
-- Never generalize the 95.65% final-answer figure to arbitrary submitted images;
-  consult `docs/validation-methodology.md` for metric scope.
-- Never conceal the 4.17% visual/diagram interpretation limitation.
-- Never describe planned cloud, dashboard, database, PDF, analytics, multilingual,
-  or institutional features as current.
+- Preserve the frozen 51-case baseline as historical validation evidence.
+- Do not claim a new aggregate validation rate unless a new controlled evaluation exists.
+- Do not describe the current live MVP as production SaaS or institution-ready.
+- Do not describe rendered visual-answer generation as complete.
 
-If a requested change conflicts with these constraints, stop and explain the
-conflict rather than silently weakening the safeguard.
+## Diagram / Visual Boundary
 
-## Useful Inspection Commands
+The current live MVP may process diagram-containing or graphical input questions.
 
-```bash
-rg --files
-rg -n "search term" README.md SPEC.md AGENTS.md CLAUDE.md docs workflow samples
-jq '{name, active, node_count:(.nodes|length), nodes:[.nodes[].name]}' \
-  workflow/math-intellect-workflow-sanitized.json
-jq '.connections' workflow/math-intellect-workflow-sanitized.json
-git diff --check
-git diff --stat
-git diff
-```
+If the final answer itself requires a rendered diagram, graph, construction, transformation, or other visual, the stable MVP currently returns text-based drawing instructions. Visual rendering remains under active development.
 
-For a final credential check, use the safe procedure in `AGENTS.md`. Do not print
-suspected secret values; report the file and remediation need without echoing the
-credential.
+## Documentation Review
 
-## Task-Specific Review
+When changing deployment, routing, or capability claims, check all related Markdown files. Avoid leaving “local-only”, “cloud planned”, or “no failure reply” claims after those states have changed.
 
-### Documentation
+## Validation Claims
 
-Verify relative links, consistent terminology, implemented/planned boundaries,
-and claims against the narrowest source of truth listed in `SPEC.md`.
+Use `docs/validation-methodology.md` as the scope guardrail.
 
-### n8n workflow JSON
+The frozen validation baseline predates some later workflow and cloud-deployment changes. Treat later successful tests as current evidence, not as a replacement aggregate benchmark.
 
-Validate JSON, inspect node references and all gate branches, keep `active: false`,
-and ensure credentials and instance identifiers remain absent. Imported execution
-must occur only in a separate development instance with test credentials.
-
-### Prompts or mathematical behavior
-
-Check the complete chain: source-image fidelity, question reconstruction, method,
-working, final answer, assessment guidance, moderation, and rendered output. Use
-independent mathematical verification. Internal agreement among AI stages is not
-enough.
-
-### Validation claims
-
-Use the workbook/evidence as the source of record. Preserve metric denominators,
-applicability rules, N/A treatment, rounding, and the frozen baseline. Version a
-new evaluation rather than overwriting old results.
-
-## Handoff Format
+## Handoff
 
 At completion, state:
 
-1. what changed;
-2. which checks were run and their results;
-3. what was not run or independently verified;
-4. any security, privacy, mathematical, or documentation risk still open; and
-5. the exact files requiring owner review.
+1. files changed;
+2. current behavior documented;
+3. checks performed;
+4. what remains unverified; and
+5. any open security, mathematical, or documentation risk.
 
-Be precise and restrained. The goal is a trustworthy educational system and an
-auditable public record, not the strongest possible marketing claim.
+Do not push or publish without explicit owner authorization.
