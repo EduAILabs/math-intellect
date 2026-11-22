@@ -49,7 +49,7 @@ The reference solution is provided for independent verification. It is not prese
 
 ## Sample Purpose
 
-This sample documents a diagram-dependent failure case. It is included to show a current limitation of the functional MVP when the required mathematical facts must be extracted from the diagram rather than from the surrounding text alone.
+This sample documents a diagram-dependent failure case. It is included to show historical limitation observed in this earlier test when the required mathematical facts must be extracted from the diagram rather than from the surrounding text alone.
 
 ## Related Output
 

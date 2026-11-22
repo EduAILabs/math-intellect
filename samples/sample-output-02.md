@@ -96,7 +96,7 @@ The recorded failure is consistent with a diagram-information extraction limitat
 
 This document records one selected failure case from the Math Intellect functional MVP.
 
-It is included to demonstrate a current limitation in diagram-dependent question handling. This sample should not be interpreted as evidence that all diagram-based questions fail, nor does one failure case replace the project’s broader validation record.
+It is included to demonstrate historical limitation observed in this earlier test. This sample should not be interpreted as evidence that all diagram-based questions fail, nor does one failure case replace the project’s broader validation record.
 
 ## Related Documents
 

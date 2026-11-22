@@ -28,7 +28,7 @@ In this test:
 - the Moderator returned a `FAIL` status; and
 - the Moderator Check node routed the item to the **False Branch** rather than the PASS branch, so the normal PASS-based delivery path was not followed.
 
-This sample is included to illustrate a current limitation of the functional MVP in diagram-dependent question handling.
+This sample is included to illustrate historical limitation observed in this earlier test.
 
 ## Evidence Notes
 
