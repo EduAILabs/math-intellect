@@ -9,9 +9,13 @@
 **Processing:** n8n and OpenAI API workflow
 
 ## Historical workflow note: 
-This sample records an earlier MVP execution before the current user-facing review-failure routing was added. In the current cloud-deployed workflow, a Moderator Check or Quality Gate failure is routed to Review Failure Reply → Reply to LINE, so the user receives a safe fallback message instead of the workflow ending without a reply.
+Sample 02 records an earlier MVP execution before the current cloud deployment and user-facing review-failure routing were implemented. The current cloud-deployed workflow can process diagram-containing questions when the visual information is successfully interpreted. If the final answer requires rendered visual output, the current stable MVP provides text-based drawing instructions while visual rendering remains under development.
+In the current cloud-deployed workflow, a Moderator Check or Quality Gate failure is routed to Review Failure Reply → Reply to LINE, so the user receives a safe fallback message instead of the workflow ending without a reply.
 
 **This historical failure should not be interpreted as evidence that the current MVP cannot process diagram-containing questions. The current workflow can process such inputs when the diagram information is successfully interpreted.**
+
+
+
 
 ## Test Information
 

@@ -1,5 +1,9 @@
 # Math Intellect — Sample Demonstrations
 
+## Historical note: 
+
+Sample 02 records an earlier MVP execution before the current cloud deployment and user-facing review-failure routing were implemented. The current cloud-deployed workflow can process diagram-containing questions when the visual information is successfully interpreted. If a final answer requires rendered visual output, the current stable MVP provides text-based drawing instructions while visual rendering remains under development.
+
 This folder contains selected question-input and response-output examples from the Math Intellect functional MVP.
 
 ## Sample Index
