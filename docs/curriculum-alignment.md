@@ -50,7 +50,7 @@ Examiner-inspired guidance is intended to help a learner understand which method
 
 ## Current Limitations and Validation
 
-The existing technical validation comprises 51 test cases and identifies visual/diagram interpretation as a major limitation. Consequently, curriculum-fit and assessment-alignment scores cannot establish universal syllabus compliance or correctness across all question formats. Any claim of increased student learning or examination performance requires a separate educational study.
+The frozen 51-case technical-validation baseline identified visual/diagram interpretation as a major limitation at the time of that evaluation. These historical metrics remain unchanged and should not be interpreted as a new benchmark of the later cloud-deployed workflow.
 
 ## Related Documents
 

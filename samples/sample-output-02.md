@@ -8,6 +8,11 @@
 **Output channel:** LINE Official Account  
 **Processing:** n8n and OpenAI API workflow
 
+## Historical workflow note: 
+This sample records an earlier MVP execution before the current user-facing review-failure routing was added. In the current cloud-deployed workflow, a Moderator Check or Quality Gate failure is routed to Review Failure Reply → Reply to LINE, so the user receives a safe fallback message instead of the workflow ending without a reply.
+
+**This historical failure should not be interpreted as evidence that the current MVP cannot process diagram-containing questions. The current workflow can process such inputs when the diagram information is successfully interpreted.**
+
 ## Test Information
 
 | Field | Recorded information |
