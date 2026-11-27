@@ -258,9 +258,18 @@ Math Intellect aims to evolve into an AI-assisted STEM learning platform that co
 
 ## Project Report
 
-The public project report documents the earlier MVP architecture, validation, educational rationale, and development direction.
+The latest public technical report provides a comprehensive overview of Math Intellect, including its cloud-deployed MVP, system architecture, multi-stage AI processing, quality assurance framework, historical technical validation, current limitations, and future development roadmap.
 
-[View the Math Intellect Project Report (PDF)](reports/Math_Intellect_Project_Report_Public.pdf)
+**Latest Report**
+
+- [Math Intellect Project Report V1.0 – Cloud Deployment Edition (PDF)](reports/Math_Intellect_Project_Report_Cloud_V1.0.pdf)
+
+**Previous Report**
+
+- [Math Intellect Project Report – Historical Prototype Edition (PDF)](reports/Math_Intellect_Project_Report_Public.pdf)
+
+The September 2026 technical validation results represent the historical prototype baseline and are not presented as cloud deployment performance benchmarks.
+
 
 > Some historical report sections describe the earlier local-development stage. The current repository Markdown documentation is the source of truth for the latest cloud-deployment status.
 
